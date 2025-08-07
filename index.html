@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salim Abdikadir Mohamed - Portfolio</title>
+    <!-- Load Tailwind CSS from CDN for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load React, ReactDOM, and Babel for JSX compilation -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- Load PDF generation libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- Set a custom font for the page -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- This is where the React app will be rendered -->
+    <div id="root"></div>
+
+    <!-- The React component code, transpiled by Babel -->
+    <script type="text/babel">
+        // Custom UI components to simulate shadcn/ui and lucide-react
+        const Button = ({ children, onClick, variant = 'default', className = '', ...props }) => {
+          const baseClasses = 'px-4 py-2 rounded-md font-semibold transition-colors duration-200';
+          const variantClasses = {
+            default: 'bg-blue-600 text-white hover:bg-blue-700',
+            secondary: 'bg-gray-200 text-gray-800 hover:bg-gray-300',
+            outline: 'bg-transparent border border-gray-400 text-gray-800 hover:bg-gray-100',
+            success: 'bg-green-600 text-white hover:bg-green-700'
+          };
+          return (
+            <button onClick={onClick} className={`${baseClasses} ${variantClasses[variant]} ${className}`} {...props}>
+              {children}
+            </button>
+          );
+        };
+
+        const Input = ({ type = 'text', value, onChange, placeholder, className = '', ...props }) => {
+          const baseClasses = 'w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500';
+          return (
+            <input
+              type={type}
+              value={value}
+              onChange={onChange}
+              placeholder={placeholder}
+              className={`${baseClasses} ${className}`}
+              {...props}
+            />
+          );
+        };
+
+        const Select = ({ value, onChange, options = [], className = '' }) => {
+          const baseClasses = 'w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500';
+          return (
+            <select value={value} onChange={onChange} className={`${baseClasses} ${className}`}>
+              {options.map((option, index) => (
+                <option key={index} value={option.value}>{option.label}</option>
+              ))}
+            </select>
+          );
+        };
+
+        const Card = ({ children, className = '' }) => {
+          return (
+            <div className={`bg-white p-6 rounded-xl shadow-md ${className}`}>
+              {children}
+            </div>
+          );
+        };
+        
+        // Custom SVG icons to replace lucide-react to prevent errors
+        const ToggleLeftIcon = (props) => (
+          <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="2" y="6" width="20" height="12" rx="6" />
+            <circle cx="8" cy="12" r="4" />
+          </svg>
+        );
+
+        const ToggleRightIcon = (props) => (
+          <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="2" y="6" width="20" height="12" rx="6" />
+            <circle cx="16" cy="12" r="4" />
+          </svg>
+        );
+
+        // Loading spinner component
+        const LoadingSpinner = () => (
+          <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+        );
+
+        const DownloadIcon = (props) => (
+          <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="7 10 12 15 17 10" />
+            <line x1="12" x2="12" y1="15" y2="3" />
+          </svg>
+        );
+
+        const MessageSquareIcon = (props) => (
+          <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+          </svg>
+        );
+
+        const HomeIcon = (props) => (
+          <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+            <polyline points="9 22 9 12 15 12 15 22" />
+          </svg>
+        );
+
+        // A separate component for the class timetable table, to be used for both display and PDF export
+        const ClassTimetableTable = ({ className, timetableData, workingDayLabels, periodsPerDay, onExport, isExporting }) => {
+          return (
+            <div className="space-y-4 overflow-x-auto">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-xl font-bold text-blue-800">{className}</h3>
+                <Button
+                  variant="secondary"
+                  onClick={() => onExport(className)}
+                  disabled={isExporting}
+                  className="flex items-center space-x-2 text-sm"
+                >
+                  {isExporting ? <LoadingSpinner /> : <DownloadIcon />}
+                  <span>{isExporting ? 'Exporting...' : 'Export to PDF'}</span>
+                </Button>
+              </div>
+              <table className="min-w-full divide-y divide-gray-200 border border-gray-200 rounded-lg">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Period</th>
+                    {workingDayLabels.map(day => (
+                      <th key={day} className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        {day}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {Array.from({ length: periodsPerDay }).map((_, periodIndex) => (
+                    <tr key={periodIndex}>
+                      <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900 text-sm">{periodIndex + 1}</td>
+                      {workingDayLabels.map(day => {
+                        const lesson = timetableData[className]?.[day]?.[periodIndex] || { subject: 'Free', teacher: null };
+                        const isFree = lesson.subject === 'Free';
+                        return (
+                          <td key={day} className="px-6 py-4 whitespace-nowrap">
+                            <div className={`p-2 rounded-md ${isFree ? 'bg-gray-100 text-gray-500' : 'bg-blue-50 text-blue-800'}`}>
+                              <div className="font-semibold text-sm">{lesson.subject}</div>
+                              <div className="text-xs">{!isFree && `(${lesson.teacher})`}</div>
+                            </div>
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          );
+        };
+
+        // A new component for the teacher timetable table
+        const TeacherTimetableTable = ({ teacherName, timetableData, workingDayLabels, periodsPerDay, onExport, isExporting }) => {
+          return (
+            <div className="space-y-4 overflow-x-auto">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-xl font-bold text-blue-800">{teacherName}</h3>
+                <Button
+                  variant="secondary"
+                  onClick={() => onExport(teacherName)}
+                  disabled={isExporting}
+                  className="flex items-center space-x-2 text-sm"
+                >
+                  {isExporting ? <LoadingSpinner /> : <DownloadIcon />}
+                  <span>{isExporting ? 'Exporting...' : 'Export to PDF'}</span>
+                </Button>
+              </div>
+              <table className="min-w-full divide-y divide-gray-200 border border-gray-200 rounded-lg">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Period</th>
+                    {workingDayLabels.map(day => (
+                      <th key={day} className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        {day}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {Array.from({ length: periodsPerDay }).map((_, periodIndex) => (
+                    <tr key={periodIndex}>
+                      <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900 text-sm">{periodIndex + 1}</td>
+                      {workingDayLabels.map(day => {
+                        const lesson = timetableData[teacherName]?.[day]?.[periodIndex] || { className: 'Free' };
+                        const isFree = lesson.className === 'Free';
+                        return (
+                          <td key={day} className="px-6 py-4 whitespace-nowrap">
+                            <div className={`p-2 rounded-md ${isFree ? 'bg-gray-100 text-gray-500' : 'bg-green-50 text-green-800'}`}>
+                              <div className="font-semibold text-sm">{lesson.className}</div>
+                              <div className="text-xs">{!isFree && `(${lesson.subject})`}</div>
+                            </div>
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          );
+        };
+
+        const LandingPage = ({ onNavigate }) => {
+          return (
+            <div className="flex flex-col items-center justify-center min-h-screen p-6 text-center bg-white shadow-xl rounded-xl m-8">
+              <h1 className="text-5xl font-extrabold tracking-tight text-gray-900 sm:text-6xl md:text-7xl">
+                Hello, I'm <span className="text-blue-600">Salim Abdikadir Mohamed</span>
+              </h1>
+              <p className="mt-4 max-w-xl text-lg text-gray-600 sm:text-xl">
+                This is a sample portfolio application showcasing a powerful timetable generation tool.
+                It's designed to help schools and universities create and manage schedules efficiently.
+              </p>
+              <div className="mt-8 flex justify-center space-x-4">
+                <Button onClick={() => onNavigate('app')} className="px-6 py-3 text-lg">
+                  Explore the App
+                </Button>
+                <Button variant="outline" onClick={() => onNavigate('contact')} className="px-6 py-3 text-lg">
+                  Contact Me
+                </Button>
+              </div>
+            </div>
+          );
+        };
+
+        const ContactPage = () => {
+          const [formState, setFormState] = React.useState({ name: '', email: '', message: '' });
+
+          const handleChange = (e) => {
+            const { name, value } = e.target;
+            setFormState(prev => ({ ...prev, [name]: value }));
+          };
+
+          const handleSubmit = (e) => {
+            e.preventDefault();
+            // In a real application, you'd send this data to a server.
+            // For now, we'll just log it.
+            console.log('Contact form submitted:', formState);
+            alert('Thank you for your message! (Form data logged to console)');
+            setFormState({ name: '', email: '', message: '' });
+          };
+
+          return (
+            <div className="p-6">
+              <div className="max-w-xl mx-auto space-y-6">
+                <Card>
+                  <h2 className="text-3xl font-bold text-gray-900 text-center">Contact Me</h2>
+                  <p className="text-gray-600 mt-2 text-center">
+                    Feel free to reach out with any questions or collaboration opportunities.
+                  </p>
+                  <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+                    <div>
+                      <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
+                      <Input
+                        id="name"
+                        name="name"
+                        type="text"
+                        value={formState.name}
+                        onChange={handleChange}
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
+                      <Input
+                        id="email"
+                        name="email"
+                        type="email"
+                        value={formState.email}
+                        onChange={handleChange}
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="message" className="block text-sm font-medium text-gray-700">Message</label>
+                      <textarea
+                        id="message"
+                        name="message"
+                        rows="4"
+                        value={formState.message}
+                        onChange={handleChange}
+                        required
+                        className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      ></textarea>
+                    </div>
+                    <Button type="submit" className="w-full">
+                      Send Message
+                    </Button>
+                  </form>
+                </Card>
+              </div>
+            </div>
+          );
+        };
+
+
+        // Main Application Component
+        const TimetableApp = () => {
+          const { useState, useMemo, useEffect } = React;
+          // State for settings
+          const [teachers, setTeachers] = useState(['Mr. Smith', 'Ms. Jones', 'Dr. Williams']);
+          const [classes, setClasses] = useState(['3A', '3B', '4A', '4B']);
+          const [subjects, setSubjects] = useState(['English', 'Maths', 'Science', 'History', 'Art']);
+          const [periodsPerDay, setPeriodsPerDay] = useState(6);
+          const [workingDays, setWorkingDays] = useState(5);
+          const [offDays, setOffDays] = useState(['Saturday', 'Sunday']);
+
+          // State for assignments
+          const [assignments, setAssignments] = useState({
+            '3A': { 'English': 'Mr. Smith', 'Maths': 'Ms. Jones', 'Science': 'Dr. Williams', 'History': 'Mr. Smith', 'Art': 'Ms. Jones', },
+            '3B': { 'English': 'Ms. Jones', 'Maths': 'Mr. Smith', 'Science': 'Dr. Williams', 'History': 'Ms. Jones', 'Art': 'Mr. Smith', },
+            '4A': { 'English': 'Mr. Smith', 'Maths': 'Dr. Williams', 'Science': 'Ms. Jones', 'History': 'Dr. Williams', 'Art': 'Ms. Jones', },
+            '4B': { 'English': 'Dr. Williams', 'Maths': 'Mr. Smith', 'Science': 'Ms. Jones', 'History': 'Mr. Smith', 'Art': 'Dr. Williams', },
+          });
+
+          // State for the generated timetable
+          const [timetable, setTimetable] = useState(null);
+          const [teacherTimetable, setTeacherTimetable] = useState(null); // New state for teacher timetable
+          const [showSettings, setShowSettings] = useState(true);
+          const [currentView, setCurrentView] = useState('class'); // New state for view toggle
+          const [isExportingAll, setIsExportingAll] = useState(false);
+          const [isExporting, setIsExporting] = useState({ class: {}, teacher: {} });
+          const [areLibrariesLoaded, setAreLibrariesLoaded] = useState(false);
+
+
+          // Helper functions for adding/removing items
+          const addItem = (item, setList) => {
+            if (item.trim() !== '') {
+              setList(prev => [...prev, item.trim()]);
+            }
+          };
+
+          const removeItem = (itemToRemove, setList) => {
+            setList(prev => prev.filter(item => item !== itemToRemove));
+          };
+
+          const weekDays = useMemo(() => ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'], []);
+          const workingDayLabels = useMemo(() => {
+            const validDays = weekDays.filter(day => !offDays.includes(day));
+            return validDays.slice(0, workingDays);
+          }, [workingDays, weekDays, offDays]);
+
+          const handleAssignmentChange = (className, subject, teacher) => {
+            setAssignments(prev => ({
+              ...prev,
+              [className]: {
+                ...prev[className],
+                [subject]: teacher,
+              },
+            }));
+          };
+
+          // The core timetable generation function
+          const generateTimetable = () => {
+            // Master schedule to track teacher availability
+            const teacherSchedule = {};
+            teachers.forEach(teacher => {
+              teacherSchedule[teacher] = {};
+              workingDayLabels.forEach(day => {
+                teacherSchedule[teacher][day] = new Array(periodsPerDay).fill(null);
+              });
+            });
+
+            const newTimetable = {};
+            classes.forEach(className => {
+              newTimetable[className] = {};
+              workingDayLabels.forEach(day => {
+                newTimetable[className][day] = new Array(periodsPerDay).fill({ subject: 'Free', teacher: null });
+              });
+            });
+
+            // Create a list of all required assignments for all classes
+            const allAssignments = [];
+            classes.forEach(className => {
+              const classAssignments = assignments[className] || {};
+              subjects.forEach(subject => {
+                const teacher = classAssignments[subject] || 'Unassigned';
+                if (teacher !== 'Unassigned') {
+                  const periodsPerSubject = Math.floor((periodsPerDay * workingDays) / subjects.length);
+                  for (let i = 0; i < periodsPerSubject; i++) {
+                    allAssignments.push({ className, subject, teacher });
+                  }
+                }
+              });
+            });
+
+            // Shuffle the entire list of assignments to distribute them randomly
+            const shuffledAssignments = allAssignments.sort(() => Math.random() - 0.5);
+
+            // Place the assignments into the timetable
+            shuffledAssignments.forEach(assignment => {
+              const { className, subject, teacher } = assignment;
+              let placed = false;
+              let attempts = 0;
+              const maxAttempts = periodsPerDay * workingDays;
+
+              while (!placed && attempts < maxAttempts) {
+                const dayIndex = Math.floor(Math.random() * workingDayLabels.length);
+                const day = workingDayLabels[dayIndex];
+                const period = Math.floor(Math.random() * periodsPerDay);
+
+                if (
+                  newTimetable[className]?.[day]?.[period]?.subject === 'Free' &&
+                  teacherSchedule[teacher]?.[day]?.[period] === null
+                ) {
+                  newTimetable[className][day][period] = { subject, teacher };
+                  teacherSchedule[teacher][day][period] = { className, subject };
+                  placed = true;
+                }
+                attempts++;
+              }
+            });
+
+            setTimetable(newTimetable);
+            setTeacherTimetable(teacherSchedule);
+          };
+
+          const loadScript = (src) => {
+            return new Promise((resolve, reject) => {
+              const script = document.createElement('script');
+              script.src = src;
+              script.onload = () => resolve(true);
+              script.onerror = () => reject(new Error(`Failed to load script: ${src}`));
+              document.head.appendChild(script);
+            });
+          };
+
+          const loadPdfLibraries = async () => {
+            if (areLibrariesLoaded) return;
+            try {
+              await Promise.all([
+                loadScript('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js'),
+                loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js')
+              ]);
+              setAreLibrariesLoaded(true);
+            } catch (error) {
+              console.error('[ERROR] Error loading PDF libraries:', error);
+            }
+          };
+
+          useEffect(() => {
+            loadPdfLibraries();
+          }, []);
+
+          const renderClassTimetableToHtml = (className, timetableData, workingDayLabels, periodsPerDay) => {
+            const tableHeader = `
+              <thead class="bg-gray-50">
+                <tr>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Period</th>
+                  ${workingDayLabels.map(day => `
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">${day}</th>
+                  `).join('')}
+                </tr>
+              </thead>
+            `;
+
+            const tableBody = `
+              <tbody class="bg-white divide-y divide-gray-200">
+                ${Array.from({ length: periodsPerDay }).map((_, periodIndex) => `
+                  <tr>
+                    <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900 text-sm">${periodIndex + 1}</td>
+                    ${workingDayLabels.map(day => {
+                      const lesson = timetableData[className]?.[day]?.[periodIndex] || { subject: 'Free', teacher: null };
+                      const isFree = lesson.subject === 'Free';
+                      return `
+                        <td class="px-6 py-4 whitespace-nowrap">
+                          <div class="p-2 rounded-md ${isFree ? 'bg-gray-100 text-gray-500' : 'bg-blue-50 text-blue-800'}">
+                            <div class="font-semibold text-sm">${lesson.subject}</div>
+                            <div class="text-xs">${!isFree ? `(${lesson.teacher})` : ''}</div>
+                          </div>
+                        </td>
+                      `;
+                    }).join('')}
+                  </tr>
+                `).join('')}
+              </tbody>
+            `;
+
+            return `
+              <div class="space-y-4 overflow-x-auto p-6 bg-white rounded-xl shadow-md">
+                <div class="flex justify-between items-center mb-4">
+                  <h3 class="text-xl font-bold text-blue-800">${className}</h3>
+                </div>
+                <table class="min-w-full divide-y divide-gray-200 border border-gray-200 rounded-lg">
+                  ${tableHeader}
+                  ${tableBody}
+                </table>
+              </div>
+            `;
+          };
+
+          const renderTeacherTimetableToHtml = (teacherName, timetableData, workingDayLabels, periodsPerDay) => {
+            const tableHeader = `
+              <thead class="bg-gray-50">
+                <tr>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Period</th>
+                  ${workingDayLabels.map(day => `
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">${day}</th>
+                  `).join('')}
+                </tr>
+              </thead>
+            `;
+
+            const tableBody = `
+              <tbody class="bg-white divide-y divide-gray-200">
+                ${Array.from({ length: periodsPerDay }).map((_, periodIndex) => `
+                  <tr>
+                    <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900 text-sm">${periodIndex + 1}</td>
+                    ${workingDayLabels.map(day => {
+                      const lesson = timetableData[teacherName]?.[day]?.[periodIndex] || { className: 'Free' };
+                      const isFree = lesson.className === 'Free';
+                      return `
+                        <td class="px-6 py-4 whitespace-nowrap">
+                          <div class="p-2 rounded-md ${isFree ? 'bg-gray-100 text-gray-500' : 'bg-green-50 text-green-800'}">
+                            <div class="font-semibold text-sm">${lesson.className}</div>
+                            <div class="text-xs">${!isFree ? `(${lesson.subject})` : ''}</div>
+                          </div>
+                        </td>
+                      `;
+                    }).join('')}
+                  </tr>
+                `).join('')}
+              </tbody>
+            `;
+
+            return `
+              <div class="space-y-4 overflow-x-auto p-6 bg-white rounded-xl shadow-md">
+                <div class="flex justify-between items-center mb-4">
+                  <h3 class="text-xl font-bold text-blue-800">${teacherName}</h3>
+                </div>
+                <table class="min-w-full divide-y divide-gray-200 border border-gray-200 rounded-lg">
+                  ${tableHeader}
+                  ${tableBody}
+                </table>
+              </div>
+            `;
+          };
+
+          const exportTimetableToPDF = async (entityName, type) => {
+            if (!areLibrariesLoaded || (!timetable && type === 'class') || (!teacherTimetable && type === 'teacher')) {
+              console.log('Timetable not generated or libraries not loaded.');
+              return;
+            }
+
+            setIsExporting(prev => ({
+              ...prev,
+              [type]: { ...prev[type], [entityName]: true }
+            }));
+
+            const { jsPDF } = window.jspdf;
+
+            const container = document.createElement('div');
+            container.style.position = 'absolute';
+            container.style.left = '-9999px';
+            document.body.appendChild(container);
+
+            try {
+              const element = document.createElement('div');
+              if (type === 'class') {
+                element.innerHTML = renderClassTimetableToHtml(entityName, timetable, workingDayLabels, periodsPerDay);
+              } else {
+                element.innerHTML = renderTeacherTimetableToHtml(entityName, teacherTimetable, workingDayLabels, periodsPerDay);
+              }
+              container.appendChild(element);
+
+              await new Promise(resolve => setTimeout(resolve, 50));
+
+              const canvas = await window.html2canvas(element, { scale: 2, useCORS: true });
+              const imgData = canvas.toDataURL('image/png');
+              const pdf = new jsPDF('p', 'mm', 'a4');
+              const imgWidth = 210;
+              const pageHeight = 295;
+              const imgHeight = canvas.height * imgWidth / canvas.width;
+              let heightLeft = imgHeight;
+              let position = 0;
+
+              pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+              heightLeft -= pageHeight;
+
+              while (heightLeft >= 0) {
+                position = heightLeft - imgHeight;
+                pdf.addPage();
+                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+              }
+              pdf.save(`${entityName}_timetable.pdf`);
+
+              container.removeChild(element);
+            } catch (error) {
+              console.error(`[ERROR] Error during PDF export for ${entityName}:`, error);
+            } finally {
+              setIsExporting(prev => ({
+                ...prev,
+                [type]: { ...prev[type], [entityName]: false }
+              }));
+              document.body.removeChild(container);
+            }
+          };
+
+
+          const handleExportAll = async () => {
+            if (!timetable && !teacherTimetable || !areLibrariesLoaded) {
+              console.log('Timetable not generated or libraries not loaded.');
+              return;
+            }
+            setIsExportingAll(true);
+
+            if (currentView === 'class') {
+              for (const cls of classes) {
+                await exportTimetableToPDF(cls, 'class');
+              }
+            } else {
+              for (const teacher of teachers) {
+                await exportTimetableToPDF(teacher, 'teacher');
+              }
+            }
+            setIsExportingAll(false);
+          };
+
+          return (
+            <div className="min-h-screen bg-gray-50 p-6 font-sans text-gray-800">
+              <div className="max-w-7xl mx-auto space-y-8">
+                <h1 className="text-4xl font-extrabold text-center text-gray-900 leading-tight">Timetable Maker</h1>
+                <p className="text-center text-lg text-gray-600 max-w-2xl mx-auto">
+                  Set up your teachers, classes, and subjects, then assign teachers to subjects to generate a conflict-free timetable.
+                </p>
+
+                {/* Settings and Assignments */}
+                <div className="space-y-6">
+                  {/* Toggle Settings Button */}
+                  <div className="flex justify-end">
+                    <Button variant="secondary" onClick={() => setShowSettings(!showSettings)} className="flex items-center space-x-2">
+                      {showSettings ? <ToggleLeftIcon /> : <ToggleRightIcon />}
+                      <span>{showSettings ? 'Hide Settings' : 'Show Settings'}</span>
+                    </Button>
+                  </div>
+
+                  {showSettings && (
+                    <div className="grid md:grid-cols-2 gap-8">
+                      {/* Settings Card */}
+                      <Card className="space-y-6">
+                        <h2 className="text-2xl font-bold text-blue-800">School Details</h2>
+                        <div className="space-y-4">
+                          {/* Teachers */}
+                          <div>
+                            <h3 className="font-semibold text-lg">Teachers</h3>
+                            <div className="space-y-2">
+                              <Input
+                                placeholder="Add new teacher"
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter') {
+                                    addItem(e.target.value, setTeachers);
+                                    e.target.value = '';
+                                  }
+                                }}
+                              />
+                              <div className="flex flex-wrap gap-2 pt-2">
+                                {teachers.map(teacher => (
+                                  <span key={teacher} className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full flex items-center space-x-1 text-sm">
+                                    <span>{teacher}</span>
+                                    <button onClick={() => removeItem(teacher, setTeachers)} className="text-blue-500 hover:text-blue-700 font-bold ml-1">
+                                      &times;
+                                    </button>
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Classes */}
+                          <div>
+                            <h3 className="font-semibold text-lg">Classes</h3>
+                            <div className="space-y-2">
+                              <Input
+                                placeholder="Add new class"
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter') {
+                                    addItem(e.target.value, setClasses);
+                                    e.target.value = '';
+                                  }
+                                }}
+                              />
+                              <div className="flex flex-wrap gap-2 pt-2">
+                                {classes.map(cls => (
+                                  <span key={cls} className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full flex items-center space-x-1 text-sm">
+                                    <span>{cls}</span>
+                                    <button onClick={() => removeItem(cls, setClasses)} className="text-blue-500 hover:text-blue-700 font-bold ml-1">
+                                      &times;
+                                    </button>
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Subjects */}
+                          <div>
+                            <h3 className="font-semibold text-lg">Subjects</h3>
+                            <div className="space-y-2">
+                              <Input
+                                placeholder="Add new subject"
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter') {
+                                    addItem(e.target.value, setSubjects);
+                                    e.target.value = '';
+                                  }
+                                }}
+                              />
+                              <div className="flex flex-wrap gap-2 pt-2">
+                                {subjects.map(subject => (
+                                  <span key={subject} className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full flex items-center space-x-1 text-sm">
+                                    <span>{subject}</span>
+                                    <button onClick={() => removeItem(subject, setSubjects)} className="text-blue-500 hover:text-blue-700 font-bold ml-1">
+                                      &times;
+                                    </button>
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Periods and Days */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div>
+                            <label className="font-semibold text-sm">Periods per Day</label>
+                            <Input
+                              type="number"
+                              value={periodsPerDay}
+                              onChange={(e) => setPeriodsPerDay(Math.max(1, parseInt(e.target.value) || 1))}
+                              min="1"
+                            />
+                          </div>
+                          <div>
+                            <label className="font-semibold text-sm">Working Days</label>
+                            <Input
+                              type="number"
+                              value={workingDays}
+                              onChange={(e) => setWorkingDays(Math.max(1, Math.min(7, parseInt(e.target.value) || 1)))}
+                              min="1"
+                              max="7"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Off Days */}
+                        <div>
+                          <h3 className="font-semibold text-lg">Off Days</h3>
+                          <div className="flex flex-wrap gap-2 mt-2">
+                            {weekDays.map(day => (
+                              <div key={day} className="flex items-center space-x-2">
+                                <input
+                                  type="checkbox"
+                                  id={day}
+                                  checked={offDays.includes(day)}
+                                  onChange={(e) => {
+                                    if (e.target.checked) {
+                                      setOffDays([...offDays, day]);
+                                    } else {
+                                      setOffDays(offDays.filter(d => d !== day));
+                                    }
+                                  }}
+                                  className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                                />
+                                <label htmlFor={day} className="text-sm font-medium">{day}</label>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </Card>
+
+                      {/* Assignments Card */}
+                      <Card className="space-y-6">
+                        <h2 className="text-2xl font-bold text-blue-800">Teacher Assignments</h2>
+                        {classes.length > 0 && subjects.length > 0 ? (
+                          <div className="space-y-4">
+                            {classes.map(cls => (
+                              <div key={cls} className="space-y-2">
+                                <h3 className="text-xl font-semibold text-gray-900">{cls}</h3>
+                                {subjects.map(subject => (
+                                  <div key={subject} className="flex items-center space-x-4">
+                                    <span className="w-1/3 font-medium text-gray-700">{subject}</span>
+                                    <Select
+                                      value={assignments[cls]?.[subject] || ''}
+                                      onChange={(e) => handleAssignmentChange(cls, subject, e.target.value)}
+                                      options={[{ value: '', label: 'Select Teacher' }, ...teachers.map(t => ({ value: t, label: t })) ]}
+                                      className="w-2/3"
+                                    />
+                                  </div>
+                                ))}
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <p className="text-gray-500 italic">Please add classes and subjects in the settings to make assignments.</p>
+                        )}
+                      </Card>
+                    </div>
+                  )}
+                </div>
+
+                {/* Generate Button */}
+                <div className="flex justify-center pt-6 space-x-4">
+                  <Button onClick={generateTimetable} className="px-8 py-3 text-lg bg-green-600 hover:bg-green-700">
+                    Generate Timetable
+                  </Button>
+                  {timetable && (
+                    <Button
+                      variant="secondary"
+                      onClick={handleExportAll}
+                      disabled={isExportingAll || Object.values(isExporting[currentView]).some(Boolean)}
+                      className="px-8 py-3 text-lg flex items-center space-x-2"
+                    >
+                      {isExportingAll && <LoadingSpinner />}
+                      <span>{isExportingAll ? 'Exporting All...' : 'Export All to PDF'}</span>
+                    </Button>
+                  )}
+                </div>
+
+                {/* Timetable Display */}
+                {timetable && (
+                  <div className="pt-8">
+                    <div className="flex justify-center space-x-4 mb-6">
+                      <Button
+                        variant={currentView === 'class' ? 'default' : 'secondary'}
+                        onClick={() => setCurrentView('class')}
+                        className={`${currentView === 'class' ? '' : 'text-gray-700'}`}
+                      >
+                        Class Timetables
+                      </Button>
+                      <Button
+                        variant={currentView === 'teacher' ? 'default' : 'secondary'}
+                        onClick={() => setCurrentView('teacher')}
+                        className={`${currentView === 'teacher' ? '' : 'text-gray-700'}`}
+                      >
+                        Teacher Timetables
+                      </Button>
+                    </div>
+
+                    {currentView === 'class' && (
+                      <div className="space-y-8">
+                        <h2 className="text-3xl font-bold text-center text-gray-900 mb-6">Generated Timetable</h2>
+                        {classes.map(cls => (
+                          <Card key={cls} id={`timetable-class-${cls}`} className="space-y-4 overflow-x-auto">
+                            <ClassTimetableTable
+                              className={cls}
+                              timetableData={timetable}
+                              workingDayLabels={workingDayLabels}
+                              periodsPerDay={periodsPerDay}
+                              onExport={(name) => exportTimetableToPDF(name, 'class')}
+                              isExporting={isExporting.class[cls]}
+                            />
+                          </Card>
+                        ))}
+                      </div>
+                    )}
+
+                    {currentView === 'teacher' && teacherTimetable && (
+                      <div className="space-y-8">
+                        <h2 className="text-3xl font-bold text-center text-gray-900 mb-6">Teacher Timetables</h2>
+                        {teachers.map(teacher => (
+                          <Card key={teacher} id={`timetable-teacher-${teacher}`} className="space-y-4 overflow-x-auto">
+                            <TeacherTimetableTable
+                              teacherName={teacher}
+                              timetableData={teacherTimetable}
+                              workingDayLabels={workingDayLabels}
+                              periodsPerDay={periodsPerDay}
+                              onExport={(name) => exportTimetableToPDF(name, 'teacher')}
+                              isExporting={isExporting.teacher[teacher]}
+                            />
+                          </Card>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        };
+
+
+        // The main App component that handles navigation
+        const App = () => {
+          const [currentPage, setCurrentPage] = React.useState('landing');
+
+          const renderPage = () => {
+            switch (currentPage) {
+              case 'app':
+                return <TimetableApp />;
+              case 'contact':
+                return <ContactPage />;
+              default:
+                return <LandingPage onNavigate={setCurrentPage} />;
+            }
+          };
+
+          const handleNavigate = (page) => {
+            setCurrentPage(page);
+          };
+
+          return (
+            <div className="min-h-screen bg-gray-50 font-sans text-gray-800">
+              {currentPage !== 'landing' && (
+                <nav className="bg-white shadow-lg sticky top-0 z-50">
+                  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="flex justify-between items-center h-16">
+                      <div className="flex-shrink-0">
+                        <span className="text-xl font-bold text-blue-600">Salim A.M.</span>
+                      </div>
+                      <div className="flex space-x-4">
+                        <Button variant="outline" className={`flex items-center space-x-2 ${currentPage === 'landing' ? 'bg-gray-100' : ''}`} onClick={() => handleNavigate('landing')}>
+                          <HomeIcon className="w-4 h-4" />
+                          <span>Home</span>
+                        </Button>
+                        <Button variant="outline" className={`flex items-center space-x-2 ${currentPage === 'app' ? 'bg-gray-100' : ''}`} onClick={() => handleNavigate('app')}>
+                          <span>Timetable App</span>
+                        </Button>
+                        <Button variant="outline" className={`flex items-center space-x-2 ${currentPage === 'contact' ? 'bg-gray-100' : ''}`} onClick={() => handleNavigate('contact')}>
+                          <MessageSquareIcon className="w-4 h-4" />
+                          <span>Contact</span>
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </nav>
+              )}
+              {renderPage()}
+            </div>
+          );
+        };
+
+        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    </script>
+</body>
+</html>
