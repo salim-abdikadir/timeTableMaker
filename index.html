@@ -123,13 +123,13 @@
         const ClassTimetableTable = ({ className, timetableData, workingDayLabels, periodsPerDay, onExport, isExporting }) => {
           return (
             <div className="space-y-4 overflow-x-auto">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-xl font-bold text-blue-800">{className}</h3>
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4">
+                <h3 className="text-xl font-bold text-blue-800 mb-2 sm:mb-0">{className}</h3>
                 <Button
                   variant="secondary"
                   onClick={() => onExport(className)}
                   disabled={isExporting}
-                  className="flex items-center space-x-2 text-sm"
+                  className="flex items-center space-x-2 text-sm w-full sm:w-auto"
                 >
                   {isExporting ? <LoadingSpinner /> : <DownloadIcon />}
                   <span>{isExporting ? 'Exporting...' : 'Export to PDF'}</span>
@@ -138,9 +138,9 @@
               <table className="min-w-full divide-y divide-gray-200 border border-gray-200 rounded-lg">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Period</th>
+                    <th className="px-3 py-3 sm:px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Period</th>
                     {workingDayLabels.map(day => (
-                      <th key={day} className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th key={day} className="px-3 py-3 sm:px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         {day}
                       </th>
                     ))}
@@ -149,12 +149,12 @@
                 <tbody className="bg-white divide-y divide-gray-200">
                   {Array.from({ length: periodsPerDay }).map((_, periodIndex) => (
                     <tr key={periodIndex}>
-                      <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900 text-sm">{periodIndex + 1}</td>
+                      <td className="px-3 py-4 sm:px-6 whitespace-nowrap font-medium text-gray-900 text-sm">{periodIndex + 1}</td>
                       {workingDayLabels.map(day => {
                         const lesson = timetableData[className]?.[day]?.[periodIndex] || { subject: 'Free', teacher: null };
                         const isFree = lesson.subject === 'Free';
                         return (
-                          <td key={day} className="px-6 py-4 whitespace-nowrap">
+                          <td key={day} className="px-3 py-4 sm:px-6 whitespace-nowrap">
                             <div className={`p-2 rounded-md ${isFree ? 'bg-gray-100 text-gray-500' : 'bg-blue-50 text-blue-800'}`}>
                               <div className="font-semibold text-sm">{lesson.subject}</div>
                               <div className="text-xs">{!isFree && `(${lesson.teacher})`}</div>
@@ -174,13 +174,13 @@
         const TeacherTimetableTable = ({ teacherName, timetableData, workingDayLabels, periodsPerDay, onExport, isExporting }) => {
           return (
             <div className="space-y-4 overflow-x-auto">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-xl font-bold text-blue-800">{teacherName}</h3>
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4">
+                <h3 className="text-xl font-bold text-blue-800 mb-2 sm:mb-0">{teacherName}</h3>
                 <Button
                   variant="secondary"
                   onClick={() => onExport(teacherName)}
                   disabled={isExporting}
-                  className="flex items-center space-x-2 text-sm"
+                  className="flex items-center space-x-2 text-sm w-full sm:w-auto"
                 >
                   {isExporting ? <LoadingSpinner /> : <DownloadIcon />}
                   <span>{isExporting ? 'Exporting...' : 'Export to PDF'}</span>
@@ -189,9 +189,9 @@
               <table className="min-w-full divide-y divide-gray-200 border border-gray-200 rounded-lg">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Period</th>
+                    <th className="px-3 py-3 sm:px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Period</th>
                     {workingDayLabels.map(day => (
-                      <th key={day} className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th key={day} className="px-3 py-3 sm:px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         {day}
                       </th>
                     ))}
@@ -200,12 +200,12 @@
                 <tbody className="bg-white divide-y divide-gray-200">
                   {Array.from({ length: periodsPerDay }).map((_, periodIndex) => (
                     <tr key={periodIndex}>
-                      <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900 text-sm">{periodIndex + 1}</td>
+                      <td className="px-3 py-4 sm:px-6 whitespace-nowrap font-medium text-gray-900 text-sm">{periodIndex + 1}</td>
                       {workingDayLabels.map(day => {
                         const lesson = timetableData[teacherName]?.[day]?.[periodIndex] || { className: 'Free' };
                         const isFree = lesson.className === 'Free';
                         return (
-                          <td key={day} className="px-6 py-4 whitespace-nowrap">
+                          <td key={day} className="px-3 py-4 sm:px-6 whitespace-nowrap">
                             <div className={`p-2 rounded-md ${isFree ? 'bg-gray-100 text-gray-500' : 'bg-green-50 text-green-800'}`}>
                               <div className="font-semibold text-sm">{lesson.className}</div>
                               <div className="text-xs">{!isFree && `(${lesson.subject})`}</div>
@@ -223,19 +223,19 @@
 
         const LandingPage = ({ onNavigate }) => {
           return (
-            <div className="flex flex-col items-center justify-center min-h-screen p-6 text-center bg-white shadow-xl rounded-xl m-8">
-              <h1 className="text-5xl font-extrabold tracking-tight text-gray-900 sm:text-6xl md:text-7xl">
+            <div className="flex flex-col items-center justify-center min-h-screen p-4 md:p-6 text-center bg-white shadow-xl rounded-xl m-4 md:m-8">
+              <h1 className="text-3xl sm:text-5xl md:text-7xl font-extrabold tracking-tight text-gray-900">
                 Hello, I'm <span className="text-blue-600">Salim Abdikadir Mohamed</span>
               </h1>
-              <p className="mt-4 max-w-xl text-lg text-gray-600 sm:text-xl">
+              <p className="mt-4 max-w-xl text-base sm:text-lg text-gray-600">
                 This is a sample portfolio application showcasing a powerful timetable generation tool.
                 It's designed to help schools and universities create and manage schedules efficiently.
               </p>
-              <div className="mt-8 flex justify-center space-x-4">
-                <Button onClick={() => onNavigate('app')} className="px-6 py-3 text-lg">
+              <div className="mt-8 flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
+                <Button onClick={() => onNavigate('app')} className="px-6 py-3 text-lg w-full sm:w-auto">
                   Explore the App
                 </Button>
-                <Button variant="outline" onClick={() => onNavigate('contact')} className="px-6 py-3 text-lg">
+                <Button variant="outline" onClick={() => onNavigate('contact')} className="px-6 py-3 text-lg w-full sm:w-auto">
                   Contact Me
                 </Button>
               </div>
@@ -261,10 +261,10 @@
           };
 
           return (
-            <div className="p-6">
+            <div className="p-4 md:p-6">
               <div className="max-w-xl mx-auto space-y-6">
                 <Card>
-                  <h2 className="text-3xl font-bold text-gray-900 text-center">Contact Me</h2>
+                  <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 text-center">Contact Me</h2>
                   <p className="text-gray-600 mt-2 text-center">
                     Feel free to reach out with any questions or collaboration opportunities.
                   </p>
@@ -338,6 +338,7 @@
           const [teacherTimetable, setTeacherTimetable] = useState(null); // New state for teacher timetable
           const [showSettings, setShowSettings] = useState(true);
           const [currentView, setCurrentView] = useState('class'); // New state for view toggle
+          const [isGenerating, setIsGenerating] = useState(false); // To disable buttons while generating
           const [isExportingAll, setIsExportingAll] = useState(false);
           const [isExporting, setIsExporting] = useState({ class: {}, teacher: {} });
           const [areLibrariesLoaded, setAreLibrariesLoaded] = useState(false);
@@ -370,69 +371,79 @@
             }));
           };
 
-          // The core timetable generation function
-          const generateTimetable = () => {
-            // Master schedule to track teacher availability
-            const teacherSchedule = {};
-            teachers.forEach(teacher => {
-              teacherSchedule[teacher] = {};
-              workingDayLabels.forEach(day => {
-                teacherSchedule[teacher][day] = new Array(periodsPerDay).fill(null);
-              });
-            });
+          // The core timetable generation function, now with a parameter to control double periods
+          const generateTimetable = (allowDoublePeriods = true) => {
+            setIsGenerating(true);
+            setTimeout(() => {
+                // Master schedule to track teacher availability
+                const teacherSchedule = {};
+                teachers.forEach(teacher => {
+                  teacherSchedule[teacher] = {};
+                  workingDayLabels.forEach(day => {
+                    teacherSchedule[teacher][day] = new Array(periodsPerDay).fill(null);
+                  });
+                });
 
-            const newTimetable = {};
-            classes.forEach(className => {
-              newTimetable[className] = {};
-              workingDayLabels.forEach(day => {
-                newTimetable[className][day] = new Array(periodsPerDay).fill({ subject: 'Free', teacher: null });
-              });
-            });
+                const newTimetable = {};
+                classes.forEach(className => {
+                  newTimetable[className] = {};
+                  workingDayLabels.forEach(day => {
+                    newTimetable[className][day] = new Array(periodsPerDay).fill({ subject: 'Free', teacher: null });
+                  });
+                });
 
-            // Create a list of all required assignments for all classes
-            const allAssignments = [];
-            classes.forEach(className => {
-              const classAssignments = assignments[className] || {};
-              subjects.forEach(subject => {
-                const teacher = classAssignments[subject] || 'Unassigned';
-                if (teacher !== 'Unassigned') {
-                  const periodsPerSubject = Math.floor((periodsPerDay * workingDays) / subjects.length);
-                  for (let i = 0; i < periodsPerSubject; i++) {
-                    allAssignments.push({ className, subject, teacher });
+                // Create a list of all required assignments for all classes
+                const allAssignments = [];
+                classes.forEach(className => {
+                  const classAssignments = assignments[className] || {};
+                  subjects.forEach(subject => {
+                    const teacher = classAssignments[subject] || 'Unassigned';
+                    if (teacher !== 'Unassigned') {
+                      // Distribute periods per subject evenly across working days
+                      const periodsPerSubject = Math.floor((periodsPerDay * workingDays) / subjects.length);
+                      for (let i = 0; i < periodsPerSubject; i++) {
+                        allAssignments.push({ className, subject, teacher });
+                      }
+                    }
+                  });
+                });
+
+                // Shuffle the entire list of assignments to distribute them randomly
+                const shuffledAssignments = allAssignments.sort(() => Math.random() - 0.5);
+
+                // Place the assignments into the timetable with new constraint
+                shuffledAssignments.forEach(assignment => {
+                  const { className, subject, teacher } = assignment;
+                  let placed = false;
+                  let attempts = 0;
+                  const maxAttempts = periodsPerDay * workingDays;
+
+                  while (!placed && attempts < maxAttempts) {
+                    const dayIndex = Math.floor(Math.random() * workingDayLabels.length);
+                    const day = workingDayLabels[dayIndex];
+                    const period = Math.floor(Math.random() * periodsPerDay);
+
+                    // Check if the current slot is free for the class and the teacher
+                    const isClassSlotFree = newTimetable[className]?.[day]?.[period]?.subject === 'Free';
+                    const isTeacherSlotFree = teacherSchedule[teacher]?.[day]?.[period] === null;
+
+                    // Check for double periods on the same day if not allowed
+                    const isSubjectAlreadyOnDay = newTimetable[className][day].some(lesson => lesson.subject === subject);
+                    const isPlacementValid = allowDoublePeriods || !isSubjectAlreadyOnDay;
+
+                    if (isClassSlotFree && isTeacherSlotFree && isPlacementValid) {
+                      newTimetable[className][day][period] = { subject, teacher };
+                      teacherSchedule[teacher][day][period] = { className, subject };
+                      placed = true;
+                    }
+                    attempts++;
                   }
-                }
-              });
-            });
+                });
 
-            // Shuffle the entire list of assignments to distribute them randomly
-            const shuffledAssignments = allAssignments.sort(() => Math.random() - 0.5);
-
-            // Place the assignments into the timetable
-            shuffledAssignments.forEach(assignment => {
-              const { className, subject, teacher } = assignment;
-              let placed = false;
-              let attempts = 0;
-              const maxAttempts = periodsPerDay * workingDays;
-
-              while (!placed && attempts < maxAttempts) {
-                const dayIndex = Math.floor(Math.random() * workingDayLabels.length);
-                const day = workingDayLabels[dayIndex];
-                const period = Math.floor(Math.random() * periodsPerDay);
-
-                if (
-                  newTimetable[className]?.[day]?.[period]?.subject === 'Free' &&
-                  teacherSchedule[teacher]?.[day]?.[period] === null
-                ) {
-                  newTimetable[className][day][period] = { subject, teacher };
-                  teacherSchedule[teacher][day][period] = { className, subject };
-                  placed = true;
-                }
-                attempts++;
-              }
-            });
-
-            setTimetable(newTimetable);
-            setTeacherTimetable(teacherSchedule);
+                setTimetable(newTimetable);
+                setTeacherTimetable(teacherSchedule);
+                setIsGenerating(false);
+            }, 500); // Add a small delay for a better user experience
           };
 
           const loadScript = (src) => {
@@ -638,10 +649,10 @@
           };
 
           return (
-            <div className="min-h-screen bg-gray-50 p-6 font-sans text-gray-800">
+            <div className="min-h-screen bg-gray-50 p-4 font-sans text-gray-800">
               <div className="max-w-7xl mx-auto space-y-8">
-                <h1 className="text-4xl font-extrabold text-center text-gray-900 leading-tight">Timetable Maker</h1>
-                <p className="text-center text-lg text-gray-600 max-w-2xl mx-auto">
+                <h1 className="text-3xl sm:text-4xl font-extrabold text-center text-gray-900 leading-tight">Timetable Maker</h1>
+                <p className="text-center text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
                   Set up your teachers, classes, and subjects, then assign teachers to subjects to generate a conflict-free timetable.
                 </p>
 
@@ -656,10 +667,10 @@
                   </div>
 
                   {showSettings && (
-                    <div className="grid md:grid-cols-2 gap-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                       {/* Settings Card */}
                       <Card className="space-y-6">
-                        <h2 className="text-2xl font-bold text-blue-800">School Details</h2>
+                        <h2 className="text-xl sm:text-2xl font-bold text-blue-800">School Details</h2>
                         <div className="space-y-4">
                           {/* Teachers */}
                           <div>
@@ -791,20 +802,20 @@
 
                       {/* Assignments Card */}
                       <Card className="space-y-6">
-                        <h2 className="text-2xl font-bold text-blue-800">Teacher Assignments</h2>
+                        <h2 className="text-xl sm:text-2xl font-bold text-blue-800">Teacher Assignments</h2>
                         {classes.length > 0 && subjects.length > 0 ? (
                           <div className="space-y-4">
                             {classes.map(cls => (
                               <div key={cls} className="space-y-2">
-                                <h3 className="text-xl font-semibold text-gray-900">{cls}</h3>
+                                <h3 className="text-lg sm:text-xl font-semibold text-gray-900">{cls}</h3>
                                 {subjects.map(subject => (
-                                  <div key={subject} className="flex items-center space-x-4">
-                                    <span className="w-1/3 font-medium text-gray-700">{subject}</span>
+                                  <div key={subject} className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
+                                    <span className="w-full sm:w-1/3 font-medium text-gray-700">{subject}</span>
                                     <Select
                                       value={assignments[cls]?.[subject] || ''}
                                       onChange={(e) => handleAssignmentChange(cls, subject, e.target.value)}
                                       options={[{ value: '', label: 'Select Teacher' }, ...teachers.map(t => ({ value: t, label: t })) ]}
-                                      className="w-2/3"
+                                      className="w-full sm:w-2/3"
                                     />
                                   </div>
                                 ))}
@@ -819,17 +830,20 @@
                   )}
                 </div>
 
-                {/* Generate Button */}
-                <div className="flex justify-center pt-6 space-x-4">
-                  <Button onClick={generateTimetable} className="px-8 py-3 text-lg bg-green-600 hover:bg-green-700">
-                    Generate Timetable
+                {/* Generate Buttons */}
+                <div className="flex flex-col sm:flex-row justify-center pt-6 space-y-4 sm:space-y-0 sm:space-x-4">
+                  <Button onClick={() => generateTimetable(true)} className="px-8 py-3 text-lg bg-green-600 hover:bg-green-700 w-full sm:w-auto" disabled={isGenerating}>
+                    {isGenerating ? <LoadingSpinner /> : 'Generate Timetable (Allow Double Periods)'}
+                  </Button>
+                  <Button onClick={() => generateTimetable(false)} className="px-8 py-3 text-lg bg-blue-600 hover:bg-blue-700 w-full sm:w-auto" disabled={isGenerating}>
+                    {isGenerating ? <LoadingSpinner /> : 'Generate Timetable (No Double Periods)'}
                   </Button>
                   {timetable && (
                     <Button
                       variant="secondary"
                       onClick={handleExportAll}
                       disabled={isExportingAll || Object.values(isExporting[currentView]).some(Boolean)}
-                      className="px-8 py-3 text-lg flex items-center space-x-2"
+                      className="px-8 py-3 text-lg flex items-center justify-center space-x-2 w-full sm:w-auto"
                     >
                       {isExportingAll && <LoadingSpinner />}
                       <span>{isExportingAll ? 'Exporting All...' : 'Export All to PDF'}</span>
@@ -840,18 +854,18 @@
                 {/* Timetable Display */}
                 {timetable && (
                   <div className="pt-8">
-                    <div className="flex justify-center space-x-4 mb-6">
+                    <div className="flex flex-col sm:flex-row justify-center space-y-2 sm:space-y-0 sm:space-x-4 mb-6">
                       <Button
                         variant={currentView === 'class' ? 'default' : 'secondary'}
                         onClick={() => setCurrentView('class')}
-                        className={`${currentView === 'class' ? '' : 'text-gray-700'}`}
+                        className={`w-full sm:w-auto ${currentView === 'class' ? '' : 'text-gray-700'}`}
                       >
                         Class Timetables
                       </Button>
                       <Button
                         variant={currentView === 'teacher' ? 'default' : 'secondary'}
                         onClick={() => setCurrentView('teacher')}
-                        className={`${currentView === 'teacher' ? '' : 'text-gray-700'}`}
+                        className={`w-full sm:w-auto ${currentView === 'teacher' ? '' : 'text-gray-700'}`}
                       >
                         Teacher Timetables
                       </Button>
@@ -859,7 +873,7 @@
 
                     {currentView === 'class' && (
                       <div className="space-y-8">
-                        <h2 className="text-3xl font-bold text-center text-gray-900 mb-6">Generated Timetable</h2>
+                        <h2 className="text-xl sm:text-3xl font-bold text-center text-gray-900 mb-6">Generated Timetable</h2>
                         {classes.map(cls => (
                           <Card key={cls} id={`timetable-class-${cls}`} className="space-y-4 overflow-x-auto">
                             <ClassTimetableTable
@@ -877,7 +891,7 @@
 
                     {currentView === 'teacher' && teacherTimetable && (
                       <div className="space-y-8">
-                        <h2 className="text-3xl font-bold text-center text-gray-900 mb-6">Teacher Timetables</h2>
+                        <h2 className="text-xl sm:text-3xl font-bold text-center text-gray-900 mb-6">Teacher Timetables</h2>
                         {teachers.map(teacher => (
                           <Card key={teacher} id={`timetable-teacher-${teacher}`} className="space-y-4 overflow-x-auto">
                             <TeacherTimetableTable
@@ -924,19 +938,19 @@
               {currentPage !== 'landing' && (
                 <nav className="bg-white shadow-lg sticky top-0 z-50">
                   <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex justify-between items-center h-16">
-                      <div className="flex-shrink-0">
+                    <div className="flex flex-col sm:flex-row justify-between items-center h-auto sm:h-16 py-2 sm:py-0">
+                      <div className="flex-shrink-0 mb-2 sm:mb-0">
                         <span className="text-xl font-bold text-blue-600">Salim A.M.</span>
                       </div>
-                      <div className="flex space-x-4">
-                        <Button variant="outline" className={`flex items-center space-x-2 ${currentPage === 'landing' ? 'bg-gray-100' : ''}`} onClick={() => handleNavigate('landing')}>
+                      <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
+                        <Button variant="outline" className={`flex items-center justify-center space-x-2 w-full sm:w-auto ${currentPage === 'landing' ? 'bg-gray-100' : ''}`} onClick={() => handleNavigate('landing')}>
                           <HomeIcon className="w-4 h-4" />
                           <span>Home</span>
                         </Button>
-                        <Button variant="outline" className={`flex items-center space-x-2 ${currentPage === 'app' ? 'bg-gray-100' : ''}`} onClick={() => handleNavigate('app')}>
+                        <Button variant="outline" className={`flex items-center justify-center space-x-2 w-full sm:w-auto ${currentPage === 'app' ? 'bg-gray-100' : ''}`} onClick={() => handleNavigate('app')}>
                           <span>Timetable App</span>
                         </Button>
-                        <Button variant="outline" className={`flex items-center space-x-2 ${currentPage === 'contact' ? 'bg-gray-100' : ''}`} onClick={() => handleNavigate('contact')}>
+                        <Button variant="outline" className={`flex items-center justify-center space-x-2 w-full sm:w-auto ${currentPage === 'contact' ? 'bg-gray-100' : ''}`} onClick={() => handleNavigate('contact')}>
                           <MessageSquareIcon className="w-4 h-4" />
                           <span>Contact</span>
                         </Button>
